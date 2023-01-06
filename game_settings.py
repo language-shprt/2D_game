@@ -6,3 +6,5 @@ class GameSettings:
         self.screen_height = 750
         self.screen_width = 1200
         self.background_color = (153, 217, 234)
+
+        self.bee_speed = 0.5
