@@ -37,8 +37,10 @@ class SpellBeeGame:
     def _check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT:
             self.bee.movement_right_flag = True
+            self.bee.movement_direction = "to_the_right"
         elif event.key == pygame.K_LEFT:
             self.bee.movement_left_flag = True
+            self.bee.movement_direction = "to_the_left"
         elif event.key == pygame.K_UP:
             self.bee.movement_up_flag = True
         elif event.key == pygame.K_DOWN:

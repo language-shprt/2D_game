@@ -26,6 +26,8 @@ class Bee:
         self.movement_up_flag = False
         self.movement_down_flag = False
 
+        self.movement_direction = "to_the_left"
+
     def update(self):
         """Change the bee position if movement falg set to True."""
         if self.movement_right_flag and self.rect.right < self.screen_rect.right:
@@ -43,4 +45,7 @@ class Bee:
         
     def draw_on_screen(self):
         """Draw the bee at its current locaton."""
-        self.screen.blit(self.image, self.rect)
+        if self.movement_direction == "to_the_left":
+            self.screen.blit(self.image, self.rect)
+        elif self.movement_direction == "to_the_right":
+            self.screen.blit(pygame.transform.flip(self.image, True, False), self.rect)
