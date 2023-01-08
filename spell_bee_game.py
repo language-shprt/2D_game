@@ -3,6 +3,7 @@ import pygame
 
 from game_settings import GameSettings
 from bee import Bee
+from dandelion import DandelionSeed
 
 class SpellBeeGame:
     """Overall class to manage the game."""
@@ -12,10 +13,14 @@ class SpellBeeGame:
         pygame.init()
         self.settings = GameSettings()
 
-        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.settings.screen_width = self.screen.get_rect().width
+        self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption('Spelling Bee Game')
 
         self.bee = Bee(self)
+        self.dandelions = pygame.sprite.Group()
+        self._create_falling_dandelions()
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -58,11 +63,17 @@ class SpellBeeGame:
         elif event.key == pygame.K_DOWN:
             self.bee.movement_down_flag = False
 
+    def _create_falling_dandelions(self):
+        dandelion = DandelionSeed(self)
+        self.dandelions.add(dandelion)
+    
     def _update_screen(self):
         # Redraw the screen.
         self.screen.fill(self.settings.background_color)
         # Redraw the bee.
         self.bee.draw_on_screen()
+        # Redraw the dandelions.
+        self.dandelions.draw(self.screen)
 
         # Show the most recently drawn surface (screen).
         pygame.display.flip()
