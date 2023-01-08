@@ -16,10 +16,6 @@ class Bee:
 
         # The bee starts at the bottom center of the screen.
         self.rect.midbottom = self.screen_rect.midbottom
-
-        # Keep a decimal value of each coordinate.
-        self.x = float(self.rect.x)
-        self.y = float(self.rect.y)
         
         self.movement_right_flag = False
         self.movement_left_flag = False
@@ -27,6 +23,18 @@ class Bee:
         self.movement_down_flag = False
 
         self.movement_direction = "to_the_left"
+
+        self._store_decimal_value()
+
+    def _store_decimal_value(self):
+        # Keep a decimal value of each coordinate.
+        self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
+
+    def _update_coordinates(self):
+        # Update the coordinates after the movement is completed.
+        self.rect.x = self.x
+        self.rect.y = self.y
 
     def update(self):
         """Change the bee position if movement falg set to True."""
@@ -39,10 +47,9 @@ class Bee:
         if self.movement_down_flag and self.rect.bottom < self.screen_rect.bottom:
             self.y += self.settings.bee_speed
 
-        # Update the coordinates after the movement is completed.
-        self.rect.x = self.x
-        self.rect.y = self.y
-        
+        self._update_coordinates()
+
+
     def draw_on_screen(self):
         """Draw the bee at its current locaton."""
         if self.movement_direction == "to_the_left":
