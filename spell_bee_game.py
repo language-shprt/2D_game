@@ -28,10 +28,7 @@ class SpellBeeGame:
             # Watch for events (keyboard and mouse).
             self._check_events()
             self.bee.update()
-            for dandelion in self.dandelions:
-                dandelion.update()
-            self._delete_old_dandelions()
-            self._create_falling_dandelions()
+            self._update_dandelions()
             self._update_screen()
 
     def _check_events(self):
@@ -80,6 +77,12 @@ class SpellBeeGame:
                 self.dandelions.remove(dandelion)
                 self.dandelions_counter -= 1
             print(len(self.dandelions))
+    
+    def _update_dandelions(self):
+        for dandelion in self.dandelions:
+            dandelion.update()
+        self._delete_old_dandelions()
+        self._create_falling_dandelions()
     
     def _update_screen(self):
         # Redraw the screen.
