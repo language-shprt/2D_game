@@ -19,8 +19,8 @@ class SpellBeeGame:
         pygame.display.set_caption('Spelling Bee Game')
 
         self.bee = Bee(self)
-        self.dandelions = []
-        self.dandelions_counter = 0
+        self.dandelions = pygame.sprite.Group()
+        self.new_dandelion = DandelionSeed(self)
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -65,17 +65,14 @@ class SpellBeeGame:
             self.bee.movement_down_flag = False
 
     def _create_falling_dandelions(self):
-        if self.dandelions_counter < self.settings.number_dandelions and (len(self.dandelions) == 0 or self.dandelions[-1].rect.bottom > 200):
-            new_dandelion = DandelionSeed(self)
-            self.dandelions_counter += 1
-            self.dandelions.append(new_dandelion)
-            print(self.dandelions_counter)
+        if len(self.dandelions) < self.settings.number_dandelions and (len(self.dandelions) == 0 or self.new_dandelion.rect.bottom > 200):
+            self.new_dandelion = DandelionSeed(self)
+            self.dandelions.add(self.new_dandelion)
 
     def _delete_old_dandelions(self):
         for dandelion in self.dandelions.copy():
             if dandelion.rect.top >= self.settings.screen_height:
                 self.dandelions.remove(dandelion)
-                self.dandelions_counter -= 1
             print(len(self.dandelions))
     
     def _update_dandelions(self):
@@ -97,7 +94,7 @@ class SpellBeeGame:
         # Redraw the bee.
         self.bee.draw_on_screen()
         # Redraw the dandelions.
-        for dandelion in self.dandelions:
+        for dandelion in self.dandelions.sprites():
             dandelion.draw_dandelion()
 
         # Show the most recently drawn surface (screen).
