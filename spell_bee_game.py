@@ -83,6 +83,13 @@ class SpellBeeGame:
             dandelion.update()
         self._delete_old_dandelions()
         self._create_falling_dandelions()
+        self._check_for_collisions(self.dandelions)
+
+    def _check_for_collisions(self, dandelions_group):
+        for dandelion in dandelions_group:
+            if self.bee.rect.colliderect(dandelion):
+                print("Collision!!")
+                sys.exit()
     
     def _update_screen(self):
         # Redraw the screen.
