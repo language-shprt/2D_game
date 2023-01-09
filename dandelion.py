@@ -1,8 +1,7 @@
 import pygame
-from pygame.sprite import Sprite
 import random
 
-class DandelionSeed(Sprite):
+class DandelionSeed():
     "A class to represent a single dandelion seed."
 
     def __init__(self, game_session):
@@ -14,13 +13,14 @@ class DandelionSeed(Sprite):
         self.image = pygame.image.load('images/dandelion_smallest.bmp')
         self.rect = self.image.get_rect()
 
+        # Starting position of a new dandelion (top of the screen, random x).
         self.rect.x = random.randint(0, self.screen_rect.width)
         self.rect.y = 0
 
         self._store_decimal_value()
 
     def _store_decimal_value(self):
-        # Store the dandelion's vertical position.
+        # Store the dandelion's position.
         self.y = float(self.rect.y)
         self.x = float(self.rect.x)
 
@@ -30,6 +30,7 @@ class DandelionSeed(Sprite):
         self.rect.y = self.y
 
     def update(self):
+        # Move the dandelion left or right and down.
         self.y += self.settings.dandelion_speed
         self.settings.wind_direction = random.randint(0, 1) 
         if self.settings.wind_direction == 0:
