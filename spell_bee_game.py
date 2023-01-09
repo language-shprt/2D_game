@@ -19,8 +19,8 @@ class SpellBeeGame:
         pygame.display.set_caption('Spelling Bee Game')
 
         self.bee = Bee(self)
-        self.dandelions = pygame.sprite.Group()
-        self._create_falling_dandelions()
+        self.dandelions = []
+        self.dandelions_counter = 0
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -28,6 +28,10 @@ class SpellBeeGame:
             # Watch for events (keyboard and mouse).
             self._check_events()
             self.bee.update()
+            for dandelion in self.dandelions:
+                dandelion.update()
+            self._delete_old_dandelions()
+            self._create_falling_dandelions()
             self._update_screen()
 
     def _check_events(self):
@@ -64,8 +68,18 @@ class SpellBeeGame:
             self.bee.movement_down_flag = False
 
     def _create_falling_dandelions(self):
-        dandelion = DandelionSeed(self)
-        self.dandelions.add(dandelion)
+        if self.dandelions_counter < self.settings.number_dandelions and (len(self.dandelions) == 0 or self.dandelions[-1].rect.bottom > 200):
+            new_dandelion = DandelionSeed(self)
+            self.dandelions_counter += 1
+            self.dandelions.append(new_dandelion)
+            print(self.dandelions_counter)
+
+    def _delete_old_dandelions(self):
+        for dandelion in self.dandelions.copy():
+            if dandelion.rect.top >= self.settings.screen_height:
+                self.dandelions.remove(dandelion)
+                self.dandelions_counter -= 1
+            print(len(self.dandelions))
     
     def _update_screen(self):
         # Redraw the screen.
@@ -73,7 +87,8 @@ class SpellBeeGame:
         # Redraw the bee.
         self.bee.draw_on_screen()
         # Redraw the dandelions.
-        self.dandelions.draw(self.screen)
+        for dandelion in self.dandelions:
+            dandelion.draw_dandelion()
 
         # Show the most recently drawn surface (screen).
         pygame.display.flip()
