@@ -1,11 +1,13 @@
 import pygame
 import random
+from pygame.sprite import Sprite
 
-class DandelionSeed():
+class DandelionSeed(Sprite):
     "A class to represent a single dandelion seed."
 
     def __init__(self, game_session):
         """Initialize the dandelion seed and set its starting position."""
+        super().__init__()
         self.screen = game_session.screen
         self.screen_rect = game_session.screen.get_rect()
         self.settings = game_session.settings
