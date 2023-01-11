@@ -21,7 +21,8 @@ class SpellBeeGame:
         self.bee = Bee(self)
         self.dandelions = pygame.sprite.Group()
         self.new_dandelion = DandelionSeed(self)
-
+        self.dandelions.add(self.new_dandelion)
+        
     def run_game(self):
         """Start the main loop for the game."""
         while True:
@@ -30,6 +31,28 @@ class SpellBeeGame:
             self.bee.update()
             self._update_dandelions()
             self._update_screen()
+
+    def create_word(self):
+        for i in range(self.settings.number_letters):
+            # Drawing border
+            color = self.settings.border_color
+            square_y = self.settings.starting_y
+            square_x = self.settings.starting_x + self.settings.square_dimension*(i)
+            dimension = self.settings.square_dimension
+            border = pygame.Rect(square_x, square_y, dimension, dimension)
+            pygame.draw.rect(self.screen, color, border)
+
+            # Drawing squares
+            color = self.settings.square_color
+            square_y = self.settings.starting_y + self.settings.border
+            square_x = self.settings.starting_x + self.settings.border + self.settings.square_dimension*(i)
+            dimension = self.settings.square_dimension - 2*self.settings.border
+            word_square = pygame.Rect(square_x, square_y, dimension, dimension)
+            pygame.draw.rect(self.screen, color, word_square)
+
+            text_color = self.settings.text_color
+            self.font = pygame.font.SysFont('Arial', 50)
+            self.screen.blit(self.font.render('C', True, text_color), (square_x, square_y))
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -65,7 +88,7 @@ class SpellBeeGame:
             self.bee.movement_down_flag = False
 
     def _create_falling_dandelions(self):
-        if len(self.dandelions) < self.settings.number_dandelions and (len(self.dandelions) == 0 or self.new_dandelion.rect.bottom > 200):
+        if len(self.dandelions) < self.settings.number_dandelions and self.new_dandelion.rect.bottom > 200:
             self.new_dandelion = DandelionSeed(self)
             self.dandelions.add(self.new_dandelion)
 
@@ -76,15 +99,13 @@ class SpellBeeGame:
             print(len(self.dandelions))
     
     def _update_dandelions(self):
-        for dandelion in self.dandelions:
-            dandelion.update()
+        self.dandelions.update()    
         self._delete_old_dandelions()
         self._create_falling_dandelions()
-        self._check_for_collisions(self.dandelions)
+        self._check_for_collisions()
 
-    def _check_for_collisions(self, dandelions_group):
-        for dandelion in dandelions_group:
-            if self.bee.rect.colliderect(dandelion):
+    def _check_for_collisions(self):
+        if pygame.sprite.spritecollideany(self.bee, self.dandelions):
                 print("Collision!!")
                 sys.exit()
     
@@ -96,6 +117,7 @@ class SpellBeeGame:
         # Redraw the dandelions.
         for dandelion in self.dandelions.sprites():
             dandelion.draw_dandelion()
+        self.create_word()
 
         # Show the most recently drawn surface (screen).
         pygame.display.flip()

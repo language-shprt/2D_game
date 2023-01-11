@@ -14,3 +14,13 @@ class GameSettings:
         self.wind_speed = 0.4
         # 0 is right, 1 is left
         self.wind_direction = 0
+
+        self.number_letters = 6
+        self.square_color = (190, 150, 110)
+        self.square_dimension = 60
+        self.starting_x = 30
+        self.starting_y = 30
+        self.border_color = (60, 60, 60)
+        self.border = 3
+
+        self.text_color = (90, 0, 0)
