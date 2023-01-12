@@ -15,7 +15,7 @@ class GameSettings:
         # 0 is right, 1 is left
         self.wind_direction = 0
 
-        self.number_letters = 6
+        self.number_letters = 3
         self.square_color = (190, 150, 110)
         self.square_dimension = 60
         self.starting_x = 30
