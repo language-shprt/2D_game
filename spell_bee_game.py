@@ -20,12 +20,14 @@ class SpellBeeGame:
         pygame.display.set_caption('Spelling Bee Game')
 
         self.bee = Bee(self)
+        
         self.dandelions = pygame.sprite.Group()
         self.new_dandelion = DandelionSeed(self)
         self.dandelions.add(self.new_dandelion)
 
         self.word = WordSpell(self)
-        self.write_model_word()
+        self.model_word = self.word.get_random_word()
+        self.empty_pane = WordSpell(self)
         
     def run_game(self):
         """Start the main loop for the game."""
@@ -35,10 +37,6 @@ class SpellBeeGame:
             self.bee.update()
             self._update_dandelions()
             self._update_screen()
-
-    def write_model_word(self):
-        self.model_word = self.word.get_random_word()
-        print(self.model_word)
     
     def _check_events(self):
         for event in pygame.event.get():
@@ -98,14 +96,19 @@ class SpellBeeGame:
     def _update_screen(self):
         # Redraw the screen.
         self.screen.fill(self.settings.background_color)
-        # Redraw the word.
-        for i in range(self.settings.number_letters):
-            self.word.create_word_pane(self.model_word, i)
-        # Redraw the bee.
-        self.bee.draw_on_screen()
         # Redraw the dandelions.
         for dandelion in self.dandelions.sprites():
             dandelion.draw_dandelion()
+        # Redraw an empty word pane.
+        for i in range(self.settings.number_letters):
+            self.empty_pane.create_empty_word_pane(i)
+        # Redraw the word.
+        for i in range(self.settings.number_letters):
+            self.word.create_word_pane(i, self.settings.starting_x)
+            self.word.draw_letter_in_square(self.model_word, i)
+        # Redraw the bee.
+        self.bee.draw_on_screen()
+
 
         # Show the most recently drawn surface (screen).
         pygame.display.flip()
