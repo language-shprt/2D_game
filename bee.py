@@ -42,7 +42,7 @@ class Bee:
             self.x += self.settings.bee_speed
         if self.movement_left_flag and self.rect.left > 0:
             self.x -= self.settings.bee_speed
-        if self.movement_up_flag and self.rect.top > 0:
+        if self.movement_up_flag and self.rect.top > self.settings.starting_y + self.settings.square_dimension + 2:
             self.y -= self.settings.bee_speed
         if self.movement_down_flag and self.rect.bottom < self.screen_rect.bottom:
             self.y += self.settings.bee_speed
