@@ -44,13 +44,16 @@ class SpellBeeGame:
                 self.holders.add(self.new_holder)
         print(len(self.holders))
 
-    # def pick_random_letter(self):
-    #     self.letters = []
-    #     for letter in self.model_word:
-    #         self.letters.append(letter)
-    #     print(self.letters)
-    #     random_letter = random.choice(self.letters)
-
+    def check_bee_letter_holder_collisions(self):
+        for holder in self.holders:
+            if pygame.sprite.collide_rect(self.bee, holder):
+                print("The bee touched the holder!")
+                self.holders.remove(holder)
+            
+        if not self.holders:
+            print('The level is completed!')
+            sys.exit()
+    
     def run_game(self):
         """Start the main loop for the game."""
         while True:
@@ -58,6 +61,7 @@ class SpellBeeGame:
             self._check_events()
             self.bee.update()
             self._update_dandelions()
+            self.check_bee_letter_holder_collisions()
             self._update_screen()
     
     def _check_events(self):
