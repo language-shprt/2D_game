@@ -54,7 +54,7 @@ class WordSpell():
         color = self.settings.border_color
         square_y = self.settings.starting_y
         dimension = self.settings.square_dimension
-        square_x = self.screen_rect.width - 80 - (dimension + 2) *(letter_index)
+        square_x = self.screen_rect.width - 80 - (dimension + 2)*(self.settings.number_letters - letter_index)
         border = pygame.Rect(square_x, square_y, dimension, dimension)
         pygame.draw.rect(self.screen, color, border)
 
@@ -65,3 +65,9 @@ class WordSpell():
         dimension = dimension - 2*self.settings.border
         self.word_square = pygame.Rect(square_x, square_y, dimension, dimension)
         pygame.draw.rect(self.screen, color, self.word_square)
+
+    def create_placeholder_word(self):
+        player_word_placeholder = []
+        for i in range(self.settings.number_letters):
+            player_word_placeholder.append('*') 
+        return player_word_placeholder

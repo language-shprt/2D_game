@@ -29,11 +29,12 @@ class SpellBeeGame:
 
         self.word = WordSpell(self)
         self.model_word = self.word.get_random_word()
+        self.player_word = self.word.create_placeholder_word()
+        self.collision_counter = 0
         self.empty_pane = WordSpell(self)
-
         self.holders = pygame.sprite.Group()
         self.create_letter_holders()
-
+    
     def create_letter_holders(self):
         while len(self.holders) < self.settings.number_letters:
             self.new_holder = LetterHolder(self)
@@ -42,17 +43,17 @@ class SpellBeeGame:
                 continue
             else:
                 self.holders.add(self.new_holder)
-        print(len(self.holders))
 
     def check_bee_letter_holder_collisions(self):
-        for holder in self.holders:
+        for holder in self.holders.copy():
             if pygame.sprite.collide_rect(self.bee, holder):
                 print("The bee touched the holder!")
-                self.holders.remove(holder)
-            
-        if not self.holders:
-            print('The level is completed!')
-            sys.exit()
+                index = self.holders.sprites().copy().index(holder)
+                holder.rect.x = -100
+                holder.rect.y = -100
+                self.player_word[self.collision_counter] = self.model_word[index]
+                self.collision_counter += 1
+                print(self.player_word)
     
     def run_game(self):
         """Start the main loop for the game."""
@@ -116,7 +117,7 @@ class SpellBeeGame:
 
     def _check_for_collisions(self):
         if pygame.sprite.spritecollideany(self.bee, self.dandelions):
-                print("Collision!!")
+                print("Collision with a dandelion!!")
                 sys.exit()
     
     def _update_screen(self):
@@ -128,17 +129,16 @@ class SpellBeeGame:
         # Redraw an empty word pane.
         for i in range(self.settings.number_letters):
             self.empty_pane.create_empty_word_pane(i)
+            self.empty_pane.draw_letter_in_square(self.player_word, i)
         # Redraw the word.
         for i in range(self.settings.number_letters):
             self.word.create_word_pane(i, self.settings.starting_x)
             self.word.draw_letter_in_square(self.model_word, i)
-        
         # Redraw letter holders.
-        counter = 0
         for holder in self.holders.sprites():
             holder.draw_letter_holder()
-            holder.draw_letter_in_holder(self.model_word, counter)
-            counter += 1
+            index = self.holders.sprites().copy().index(holder)
+            holder.draw_letter_in_holder(self.model_word, index)
 
         # Redraw the bee.
         self.bee.draw_on_screen()
