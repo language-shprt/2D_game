@@ -26,6 +26,12 @@ class Bee:
 
         self._store_decimal_value()
 
+    def center_bee(self):
+        # Center the bee on the screen.
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
+    
     def _store_decimal_value(self):
         # Keep a decimal value of each coordinate.
         self.x = float(self.rect.x)
@@ -48,7 +54,6 @@ class Bee:
             self.y += self.settings.bee_speed
 
         self._update_coordinates()
-
 
     def draw_on_screen(self):
         """Draw the bee at its current locaton."""
