@@ -29,6 +29,7 @@ class SpellBeeGame:
 
         self.word = WordSpell(self)
         self.model_word = self.word.get_random_word()
+        self.letters_model_word = self.word.get_letters(self.model_word)
         self.player_word = self.word.create_placeholder_word()
         self.collision_counter = 0
         self.empty_pane = WordSpell(self)
@@ -54,7 +55,16 @@ class SpellBeeGame:
                 self.player_word[self.collision_counter] = self.model_word[index]
                 self.collision_counter += 1
                 print(self.player_word)
-    
+
+    def check_spelling(self):
+        if '*' not in self.player_word:
+            if self.player_word == self.letters_model_word:
+                print("The level is successfully completed!")
+                sys.exit()
+            else:
+                print("The spelling is not correct. Game over!")
+                sys.exit()
+        
     def run_game(self):
         """Start the main loop for the game."""
         while True:
@@ -63,6 +73,7 @@ class SpellBeeGame:
             self.bee.update()
             self._update_dandelions()
             self.check_bee_letter_holder_collisions()
+            self.check_spelling()
             self._update_screen()
     
     def _check_events(self):
@@ -139,7 +150,6 @@ class SpellBeeGame:
             holder.draw_letter_holder()
             index = self.holders.sprites().copy().index(holder)
             holder.draw_letter_in_holder(self.model_word, index)
-
         # Redraw the bee.
         self.bee.draw_on_screen()
 

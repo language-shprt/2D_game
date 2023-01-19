@@ -23,6 +23,13 @@ class WordSpell():
         word_to_spell = random.choice(possible_words).upper()
         return word_to_spell
 
+    def get_letters(self, word):
+        letters = []
+        for letter in word:
+            letters.append(letter)
+        print(letters)
+        return letters
+
     def create_word_pane(self, letter_index, starting_x):
         # Drawing border
         color = self.settings.border_color
