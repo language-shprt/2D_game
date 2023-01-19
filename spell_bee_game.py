@@ -3,6 +3,7 @@ import pygame
 import random
 
 from game_settings import GameSettings
+from game_records import Statistics
 from word import WordSpell
 from letter_holders import LetterHolder
 from bee import Bee
@@ -15,6 +16,7 @@ class SpellBeeGame:
         """Initialize the game and create the game resources."""
         pygame.init()
         self.settings = GameSettings()
+        self.stats = Statistics(self)
 
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
@@ -59,8 +61,19 @@ class SpellBeeGame:
     def check_spelling(self):
         if '*' not in self.player_word:
             if self.player_word == self.letters_model_word:
+                "Respond to the correctly completed level."
                 print("The level is successfully completed!")
-                sys.exit()
+                self.dandelions.empty()
+                self.holders.empty()
+                self.stats.level_up()
+                self.model_word = self.word.get_random_word()
+                self.letters_model_word = self.word.get_letters(self.model_word)
+                self.player_word = self.word.create_placeholder_word()
+                self.collision_counter = 0
+                self.create_letter_holders()
+                self.new_dandelion = DandelionSeed(self)
+                self.dandelions.add(self.new_dandelion)
+                self.bee.center_bee()
             else:
                 print("The spelling is not correct. Game over!")
                 sys.exit()
@@ -113,12 +126,12 @@ class SpellBeeGame:
         if len(self.dandelions) < self.settings.number_dandelions and self.new_dandelion.rect.bottom > 200:
             self.new_dandelion = DandelionSeed(self)
             self.dandelions.add(self.new_dandelion)
+        print(len(self.dandelions))
 
     def _delete_old_dandelions(self):
         for dandelion in self.dandelions.copy():
             if dandelion.rect.top >= self.settings.screen_height:
                 self.dandelions.remove(dandelion)
-            # print(len(self.dandelions))
     
     def _update_dandelions(self):
         self.dandelions.update()    
