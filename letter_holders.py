@@ -17,7 +17,7 @@ class LetterHolder(Sprite):
 
         # Position of a new letter holder (top of the screen, random x).
         available_space_x = self.screen_rect.width - self.rect.width
-        available_space_y =  self.screen_rect.height - self.rect.height
+        available_space_y =  self.screen_rect.height - 2*self.rect.height
         self.rect.x = random.randint(self.rect.width, available_space_x)
         self.rect.y = random.randint(self.rect.height, available_space_y)
 
