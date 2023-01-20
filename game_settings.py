@@ -5,15 +5,15 @@ class GameSettings:
         """Initialize the game settings."""
         self.background_color = (153, 217, 234)
 
-        self.bee_speed = 1.2
+        self.bee_speed = 10
 
         self.number_dandelions = 3
-        self.dandelion_speed = 0.5
+        self.dandelion_speed = 2
         self.wind_speed = 0.4
         # 0 is right, 1 is left
         self.wind_direction = 0
 
-        self.number_letters = 7
+        self.number_letters = 3
         self.square_color = (190, 150, 110)
         self.square_dimension = 60
         self.starting_x = 62

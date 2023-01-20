@@ -1,6 +1,5 @@
 import sys
 import pygame
-import random
 
 from game_settings import GameSettings
 from game_records import Statistics
@@ -15,6 +14,9 @@ class SpellBeeGame:
     def __init__(self):
         """Initialize the game and create the game resources."""
         pygame.init()
+
+        self.level_time = 0
+
         self.settings = GameSettings()
         self.stats = Statistics(self)
 
@@ -74,6 +76,7 @@ class SpellBeeGame:
                 self.new_dandelion = DandelionSeed(self)
                 self.dandelions.add(self.new_dandelion)
                 self.bee.center_bee()
+                self.level_time = 0
             else:
                 print("The spelling is not correct. Game over!")
                 sys.exit()
@@ -82,12 +85,18 @@ class SpellBeeGame:
         """Start the main loop for the game."""
         while True:
             # Watch for events (keyboard and mouse).
+            self.get_time()
             self._check_events()
             self.bee.update()
             self._update_dandelions()
             self.check_bee_letter_holder_collisions()
             self.check_spelling()
             self._update_screen()
+    
+    def get_time(self):
+        player_time = pygame.time.Clock().tick(60)
+        self.level_time += player_time
+        return self.level_time
     
     def _check_events(self):
         for event in pygame.event.get():
@@ -126,7 +135,6 @@ class SpellBeeGame:
         if len(self.dandelions) < self.settings.number_dandelions and self.new_dandelion.rect.bottom > 200:
             self.new_dandelion = DandelionSeed(self)
             self.dandelions.add(self.new_dandelion)
-        print(len(self.dandelions))
 
     def _delete_old_dandelions(self):
         for dandelion in self.dandelions.copy():
@@ -162,7 +170,8 @@ class SpellBeeGame:
         for holder in self.holders.sprites():
             holder.draw_letter_holder()
             index = self.holders.sprites().copy().index(holder)
-            holder.draw_letter_in_holder(self.model_word, index)
+            if self.level_time <= 2000:
+                holder.draw_letter_in_holder(self.model_word, index)
         # Redraw the bee.
         self.bee.draw_on_screen()
 
