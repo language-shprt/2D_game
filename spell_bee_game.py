@@ -18,13 +18,13 @@ class SpellBeeGame:
         self.level_time = 0
 
         self.settings = GameSettings()
-        self.stats = Statistics(self)
 
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption('Spelling Bee Game')
 
+        self.stats = Statistics(self)
         self.bee = Bee(self)
         
         self.dandelions = pygame.sprite.Group()
@@ -76,6 +76,7 @@ class SpellBeeGame:
                 self.new_dandelion = DandelionSeed(self)
                 self.dandelions.add(self.new_dandelion)
                 self.bee.center_bee()
+                self.settings.bonuses_number += 1
                 self.level_time = 0
             else:
                 print("The spelling is not correct. Game over!")
@@ -86,8 +87,9 @@ class SpellBeeGame:
         while True:
             # Watch for events (keyboard and mouse).
             self.get_time()
-            self._check_events()
-            self.bee.update()
+            if self.level_time > self.settings.time_memorize_letters:
+                self._check_events()
+                self.bee.update()
             self._update_dandelions()
             self.check_bee_letter_holder_collisions()
             self.check_spelling()
@@ -170,10 +172,11 @@ class SpellBeeGame:
         for holder in self.holders.sprites():
             holder.draw_letter_holder()
             index = self.holders.sprites().copy().index(holder)
-            if self.level_time <= 2000:
+            if self.level_time <= self.settings.time_memorize_letters:
                 holder.draw_letter_in_holder(self.model_word, index)
         # Redraw the bee.
         self.bee.draw_on_screen()
+        self.stats.show_bonuses()
 
         # Show the most recently drawn surface (screen).
         pygame.display.flip()

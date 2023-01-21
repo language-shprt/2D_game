@@ -6,6 +6,8 @@ class GameSettings:
         self.background_color = (153, 217, 234)
 
         self.bee_speed = 10
+        self.bonuses_number = 1
+        self.time_memorize_letters = 2000
 
         self.number_dandelions = 3
         self.dandelion_speed = 2
