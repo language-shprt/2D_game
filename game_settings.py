@@ -8,7 +8,7 @@ class GameSettings:
         self.bee_speed = 10
         self.bonuses_number = 1
 
-        self.player_name = '*'
+        self.player_name = ''
         self.score = 0
         self.score_correct_letter = 5
         self.time_memorize_letters = 2000

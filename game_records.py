@@ -44,7 +44,7 @@ class Statistics:
         with open('all_time_score_records.txt', mode='r') as input_data:
             records_table = input_data.readlines()
         print(records_table)
-        old_records_table = [score.replace('\n', '').split(' ') for score in records_table]
+        old_records_table = [score.replace('\n', '').split(';') for score in records_table]
         return old_records_table
 
     def check_for_new_records(self, old_records_table):
@@ -71,7 +71,7 @@ class Statistics:
             third_highest_score = self.settings.score
             third_player =  self.settings.player_name
 
-        new_records_table = [best_player + ' ' + str(highest_score) + '\n', second_player + ' ' + str(second_highest_score) + '\n', third_player + ' ' + str(third_highest_score) + '\n']
+        new_records_table = [best_player + ';' + str(highest_score) + '\n', second_player + ';' + str(second_highest_score) + '\n', third_player + ';' + str(third_highest_score) + '\n']
         print(new_records_table)
         return new_records_table
 

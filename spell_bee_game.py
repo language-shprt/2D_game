@@ -65,6 +65,7 @@ class SpellBeeGame:
         
     def run_game(self):
         """Start the main loop for the game."""
+        self.get_player_name()
         while True:
             # Watch for events (keyboard and mouse).
             self.get_time()
@@ -102,6 +103,35 @@ class SpellBeeGame:
             self.bee.movement_down_flag = True
         elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
             self.game_over()
+
+    def get_player_name(self):
+        player_name_input_flag = True
+        self.screen.fill(self.settings.background_color)
+        available_space = self.screen.get_rect().width - 600
+        input_frame = pygame.Rect(200, 200, available_space, 60)
+        input_frame.center = self.screen.get_rect().center
+        pygame.draw.rect(self.screen, self.settings.square_color, input_frame)
+        while player_name_input_flag:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
+                        self.game_over()
+                    elif event.key == pygame.K_BACKSPACE:
+                        self.settings.player_name = self.settings.player_name[:-1]
+                    elif event.key == pygame.K_RETURN:
+                        player_name_input_flag = False
+                    else:
+                        self.settings.player_name += event.unicode
+            font = pygame.font.SysFont('Arial', 50)
+            player_name_image = font.render(self.settings.player_name, True, self.settings.text_color)
+            message = 'Please enter your name'
+            message_image = font.render(message, True, self.settings.text_color)
+            self.screen.fill(self.settings.background_color)
+            pygame.draw.rect(self.screen, self.settings.square_color, input_frame)
+            self.screen.blit(message_image, (input_frame.x + 20, input_frame.y - 100))
+            self.screen.blit(player_name_image, (input_frame.x + 20, input_frame.y))
+            pygame.display.update()
+        print(f'player name is: {self.settings.player_name}')
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
