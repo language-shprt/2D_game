@@ -7,6 +7,8 @@ class GameSettings:
 
         self.bee_speed = 10
         self.bonuses_number = 1
+        self.score = 0
+        self.score_correct_letter = 5
         self.time_memorize_letters = 2000
 
         self.number_dandelions = 3
@@ -16,7 +18,7 @@ class GameSettings:
         self.wind_direction = 0
 
         self.number_letters = 3
-        self.square_color = (190, 150, 110)
+        self.square_color = (30, 170, 75)
         self.square_dimension = 60
         self.starting_x = 62
         self.starting_y = 25

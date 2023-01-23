@@ -35,7 +35,6 @@ class SpellBeeGame:
         self.model_word = self.word.get_random_word()
         self.letters_model_word = self.word.get_letters(self.model_word)
         self.player_word = self.word.create_placeholder_word()
-        self.collision_counter = 0
         self.empty_pane = WordSpell(self)
         self.holders = pygame.sprite.Group()
         self.create_letter_holders()
@@ -48,62 +47,21 @@ class SpellBeeGame:
                 continue
             else:
                 self.holders.add(self.new_holder)
-
-    def check_bee_letter_holder_collisions(self):
-        for holder in self.holders.copy():
-            if pygame.sprite.collide_rect(self.bee, holder):
-                print("The bee touched the holder!")
-                index_holder_picked = self.holders.sprites().copy().index(holder)
-                self.check_spelling(index_holder_picked, holder)
-
-    def check_spelling(self, index_holder_picked, holder):
-        if '*' in self.player_word:
-            current_letter_index = self.player_word.index('*')
-            if self.model_word[current_letter_index] == self.model_word[index_holder_picked]:
-                print('correct letter!')
-                self.player_word[current_letter_index] = self.model_word[index_holder_picked]
-                holder.rect.x = -100
-                holder.rect.y = -100
-                print(self.player_word)
-            else:
-                print('wrong letter')
-                if self.settings.bonuses_number > 1:
-                    print('...but there are bonuses!')
-                    right_index = 0
-                    for i in range(self.settings.number_letters):
-                        if self.model_word[i] == self.model_word[index_holder_picked]:
-                            right_index = i
-                            print(right_index)
-                            
-                    self.player_word[right_index] = self.model_word[index_holder_picked]
-                    self.settings.bonuses_number -= 1
-                    holder.rect.x = -100
-                    holder.rect.y = -100
-                    print(self.player_word)
-                else:
-                    print('Wrong letter, no bonuses. Game over')
-                    sys.exit()
-
-        if '*' not in self.player_word:
-            if self.player_word == self.letters_model_word:
-                "Respond to the correctly completed level."
-                print("The level is successfully completed!")
-                self.dandelions.empty()
-                self.holders.empty()
-                self.stats.level_up()
-                self.model_word = self.word.get_random_word()
-                self.letters_model_word = self.word.get_letters(self.model_word)
-                self.player_word = self.word.create_placeholder_word()
-                self.collision_counter = 0
-                self.create_letter_holders()
-                self.new_dandelion = DandelionSeed(self)
-                self.dandelions.add(self.new_dandelion)
-                self.bee.center_bee()
-                self.settings.bonuses_number += 1
-                self.level_time = 0
-            else:
-                print("The spelling is not correct. Game over!")
-                sys.exit()
+        
+    def start_new_level(self):
+        """"Respond to the correctly completed level."""
+        self.dandelions.empty()
+        self.holders.empty()
+        self.stats.level_up()
+        self.model_word = self.word.get_random_word()
+        self.letters_model_word = self.word.get_letters(self.model_word)
+        self.player_word = self.word.create_placeholder_word()
+        self.create_letter_holders()
+        self.new_dandelion = DandelionSeed(self)
+        self.dandelions.add(self.new_dandelion)
+        self.bee.center_bee()
+        self.settings.bonuses_number += 1
+        self.level_time = 0
         
     def run_game(self):
         """Start the main loop for the game."""
@@ -117,6 +75,10 @@ class SpellBeeGame:
             self.check_bee_letter_holder_collisions()
             self._update_screen()
     
+    def game_over(self):
+        """End the game."""
+        sys.exit()
+    
     def get_time(self):
         player_time = pygame.time.Clock().tick(60)
         self.level_time += player_time
@@ -125,7 +87,7 @@ class SpellBeeGame:
     def _check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                self.game_over()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
@@ -143,7 +105,7 @@ class SpellBeeGame:
         elif event.key == pygame.K_DOWN:
             self.bee.movement_down_flag = True
         elif event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
-            sys.exit()
+            self.game_over()
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
@@ -169,12 +131,59 @@ class SpellBeeGame:
         self.dandelions.update()    
         self._delete_old_dandelions()
         self._create_falling_dandelions()
-        self._check_for_collisions()
+        self._check_bee_dandelion_collisions()
 
-    def _check_for_collisions(self):
+    def _check_bee_dandelion_collisions(self):
         if pygame.sprite.spritecollideany(self.bee, self.dandelions):
-                print("Collision with a dandelion!!")
-                sys.exit()
+                print("Collision with a dandelion. Game over!")
+                self.game_over()
+
+    def check_bee_letter_holder_collisions(self):
+        for holder in self.holders.copy():
+            if pygame.sprite.collide_rect(self.bee, holder):
+                print("The bee touched the holder!")
+                index_holder_picked = self.holders.sprites().copy().index(holder)
+                self.check_spelling(index_holder_picked, holder)
+
+    def _remove_letter_holder(self, holder):
+        holder.rect.x = -100
+        holder.rect.y = -100
+    
+    def check_spelling(self, index_holder_picked, holder):
+        if '*' in self.player_word:
+            current_letter_index = self.player_word.index('*')
+            if self.model_word[current_letter_index] == self.model_word[index_holder_picked]:
+                print('correct letter!')
+                self.player_word[current_letter_index] = self.model_word[index_holder_picked]
+                self._remove_letter_holder(holder)
+                self.stats.recalcualte_player_score()
+                print(self.player_word)
+            else:
+                print('wrong letter')
+                if self.settings.bonuses_number > 1:
+                    print('...but there are bonuses!')
+                    right_index = 0
+                    for i in range(self.settings.number_letters):
+                        if self.model_word[i] == self.model_word[index_holder_picked]:
+                            right_index = i
+                            
+                    self.player_word[right_index] = self.model_word[index_holder_picked]
+                    self.settings.bonuses_number -= 1
+                    self._remove_letter_holder(holder)
+                    print(self.player_word)
+                else:
+                    self.player_word[current_letter_index] = self.model_word[index_holder_picked]
+                    print(self.player_word)
+                    print('Wrong letter, no bonuses. Game over!')
+                    self.game_over()
+
+        if '*' not in self.player_word:
+            if self.player_word == self.letters_model_word:
+                print("The level is successfully completed!")
+                self.start_new_level()
+            else:
+                print("The spelling is not correct. Game over!")
+                self.game_over()
     
     def _update_screen(self):
         # Redraw the screen.
@@ -199,6 +208,7 @@ class SpellBeeGame:
         # Redraw the bee.
         self.bee.draw_on_screen()
         self.stats.show_bonuses()
+        self.stats.show_score_on_screen()
 
         # Show the most recently drawn surface (screen).
         pygame.display.flip()
