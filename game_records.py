@@ -39,3 +39,42 @@ class Statistics:
         self.score_image_rect = self.score_image.get_rect()
         self.score_image_rect.right = self.screen_rect.right - 10
         self.screen.blit(self.score_image, self.score_image_rect)
+
+    def read_highest_scores(self):
+        with open('all_time_score_records.txt', mode='r') as input_data:
+            records_table = input_data.readlines()
+        print(records_table)
+        old_records_table = [score.replace('\n', '').split(' ') for score in records_table]
+        return old_records_table
+
+    def check_for_new_records(self, old_records_table):
+        highest_score = old_records_table[0][1]
+        best_player = old_records_table[0][0]
+        second_highest_score = old_records_table[1][1]
+        second_player = old_records_table[1][0]
+        third_highest_score = old_records_table[2][1]
+        third_player = old_records_table[2][0]
+
+        if self.settings.score >= int(highest_score):
+            third_highest_score = second_highest_score
+            third_player = second_player
+            second_highest_score = highest_score
+            second_player = best_player
+            highest_score = self.settings.score
+            best_player = self.settings.player_name
+        elif self.settings.score >= int(second_highest_score):
+            third_highest_score = second_highest_score
+            third_player =  second_player
+            second_highest_score = self.settings.score
+            second_player = self.settings.player_name
+        elif self.settings.score >= int(third_highest_score):
+            third_highest_score = self.settings.score
+            third_player =  self.settings.player_name
+
+        new_records_table = [best_player + ' ' + str(highest_score) + '\n', second_player + ' ' + str(second_highest_score) + '\n', third_player + ' ' + str(third_highest_score) + '\n']
+        print(new_records_table)
+        return new_records_table
+
+    def save_new_records_table(self, new_records_table):
+        with open('all_time_score_records.txt', mode='w') as output_data:
+            output_data.writelines(new_records_table)

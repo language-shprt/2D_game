@@ -75,10 +75,6 @@ class SpellBeeGame:
             self.check_bee_letter_holder_collisions()
             self._update_screen()
     
-    def game_over(self):
-        """End the game."""
-        sys.exit()
-    
     def get_time(self):
         player_time = pygame.time.Clock().tick(60)
         self.level_time += player_time
@@ -212,6 +208,16 @@ class SpellBeeGame:
 
         # Show the most recently drawn surface (screen).
         pygame.display.flip()
+
+    def update_records_table(self):
+        old_records_table = self.stats.read_highest_scores()
+        new_records_table = self.stats.check_for_new_records(old_records_table)
+        self.stats.save_new_records_table(new_records_table)
+
+    def game_over(self):
+        """End the game."""
+        self.update_records_table()
+        sys.exit()
 
 if __name__ == '__main__':
     # Make the game instance and run the game.
