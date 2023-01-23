@@ -53,14 +53,37 @@ class SpellBeeGame:
         for holder in self.holders.copy():
             if pygame.sprite.collide_rect(self.bee, holder):
                 print("The bee touched the holder!")
-                index = self.holders.sprites().copy().index(holder)
+                index_holder_picked = self.holders.sprites().copy().index(holder)
+                self.check_spelling(index_holder_picked, holder)
+
+    def check_spelling(self, index_holder_picked, holder):
+        if '*' in self.player_word:
+            current_letter_index = self.player_word.index('*')
+            if self.model_word[current_letter_index] == self.model_word[index_holder_picked]:
+                print('correct letter!')
+                self.player_word[current_letter_index] = self.model_word[index_holder_picked]
                 holder.rect.x = -100
                 holder.rect.y = -100
-                self.player_word[self.collision_counter] = self.model_word[index]
-                self.collision_counter += 1
                 print(self.player_word)
+            else:
+                print('wrong letter')
+                if self.settings.bonuses_number > 1:
+                    print('...but there are bonuses!')
+                    right_index = 0
+                    for i in range(self.settings.number_letters):
+                        if self.model_word[i] == self.model_word[index_holder_picked]:
+                            right_index = i
+                            print(right_index)
+                            
+                    self.player_word[right_index] = self.model_word[index_holder_picked]
+                    self.settings.bonuses_number -= 1
+                    holder.rect.x = -100
+                    holder.rect.y = -100
+                    print(self.player_word)
+                else:
+                    print('Wrong letter, no bonuses. Game over')
+                    sys.exit()
 
-    def check_spelling(self):
         if '*' not in self.player_word:
             if self.player_word == self.letters_model_word:
                 "Respond to the correctly completed level."
@@ -92,7 +115,6 @@ class SpellBeeGame:
                 self.bee.update()
             self._update_dandelions()
             self.check_bee_letter_holder_collisions()
-            self.check_spelling()
             self._update_screen()
     
     def get_time(self):
@@ -172,8 +194,8 @@ class SpellBeeGame:
         for holder in self.holders.sprites():
             holder.draw_letter_holder()
             index = self.holders.sprites().copy().index(holder)
-            if self.level_time <= self.settings.time_memorize_letters:
-                holder.draw_letter_in_holder(self.model_word, index)
+            # if self.level_time <= self.settings.time_memorize_letters:
+            holder.draw_letter_in_holder(self.model_word, index)
         # Redraw the bee.
         self.bee.draw_on_screen()
         self.stats.show_bonuses()
