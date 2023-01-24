@@ -52,18 +52,22 @@ class SpellBeeGame:
         
     def start_new_level(self):
         """"Respond to the correctly completed level."""
-        self.dandelions.empty()
-        self.holders.empty()
-        self.stats.level_up()
-        self.model_word = self.word.get_random_word()
-        self.letters_model_word = self.word.get_letters(self.model_word)
-        self.player_word = self.word.create_placeholder_word()
-        self.create_letter_holders()
-        self.new_dandelion = DandelionSeed(self)
-        self.dandelions.add(self.new_dandelion)
-        self.bee.center_bee()
-        self.settings.bonuses_number += 1
-        self.level_time = 0
+        if self.settings.number_letters < 10:
+            self.dandelions.empty()
+            self.holders.empty()
+            self.stats.level_up()
+            self.model_word = self.word.get_random_word()
+            self.letters_model_word = self.word.get_letters(self.model_word)
+            self.player_word = self.word.create_placeholder_word()
+            self.create_letter_holders()
+            self.new_dandelion = DandelionSeed(self)
+            self.dandelions.add(self.new_dandelion)
+            self.bee.center_bee()
+            self.settings.bonuses_number += 1
+            self.level_time = 0
+        else:
+            print('You won! Game over!')
+            self.game_over()
         
     def run_game(self):
         """Start the main loop for the game."""
@@ -243,15 +247,19 @@ class SpellBeeGame:
 
     def update_records_table(self):
         old_records_table = self.stats.read_highest_scores()
-        new_records_table = self.stats.check_for_new_records(old_records_table)
+        self.stats.check_for_new_records(old_records_table)
         self.stats.save_new_records_table()
 
+    def _check_bonuses_left(self):
+        self.settings.score = self.settings.score + (self.settings.bonuses_number - 1) * self.settings.score_correct_letter
+    
     def game_over(self):
         """End the game."""
+        self._check_bonuses_left()
         self.update_records_table()
         self.stats.show_records_table()
         # Pause for a while.
-        sleep(3)
+        sleep(4)
         sys.exit()
 
 if __name__ == '__main__':
