@@ -235,8 +235,8 @@ class SpellBeeGame:
         for holder in self.holders.sprites():
             holder.draw_letter_holder()
             index = self.holders.sprites().copy().index(holder)
-            # if self.level_time <= self.settings.time_memorize_letters:
-            holder.draw_letter_in_holder(self.model_word, index)
+            if self.level_time <= self.settings.time_memorize_letters:
+                holder.draw_letter_in_holder(self.model_word, index)
         # Redraw the bee.
         self.bee.draw_on_screen()
         self.stats.show_bonuses()
