@@ -3,7 +3,8 @@ import json
 with open('longman_3000_list.txt', encoding='utf-8') as input_data:
     frequent_words_list = input_data.readlines()
 
-frequent_words_list = [line.split(' ')[0].replace(',', '') for line in frequent_words_list]
+frequent_words_list = [line.split(' ')[0] for line in frequent_words_list]
+frequent_words_list = [line.replace(',', '').replace('S1', '').replace('S2', '').replace('S3', '') for line in frequent_words_list]
 
 words_with_lenths = {3: [], 4: [], 5: [], 6: [], 7: [], 8:[], 9: [], 10: []}
 
