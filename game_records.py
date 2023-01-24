@@ -48,33 +48,58 @@ class Statistics:
         return old_records_table
 
     def check_for_new_records(self, old_records_table):
-        highest_score = old_records_table[0][1]
-        best_player = old_records_table[0][0]
-        second_highest_score = old_records_table[1][1]
-        second_player = old_records_table[1][0]
-        third_highest_score = old_records_table[2][1]
-        third_player = old_records_table[2][0]
+        self.highest_score = old_records_table[0][1]
+        self.best_player = old_records_table[0][0]
+        self.second_highest_score = old_records_table[1][1]
+        self.second_player = old_records_table[1][0]
+        self.third_highest_score = old_records_table[2][1]
+        self.third_player = old_records_table[2][0]
 
-        if self.settings.score >= int(highest_score):
-            third_highest_score = second_highest_score
-            third_player = second_player
-            second_highest_score = highest_score
-            second_player = best_player
-            highest_score = self.settings.score
-            best_player = self.settings.player_name
-        elif self.settings.score >= int(second_highest_score):
-            third_highest_score = second_highest_score
-            third_player =  second_player
-            second_highest_score = self.settings.score
-            second_player = self.settings.player_name
-        elif self.settings.score >= int(third_highest_score):
-            third_highest_score = self.settings.score
-            third_player =  self.settings.player_name
+        if self.settings.score >= int(self.highest_score):
+            self.third_highest_score = self.second_highest_score
+            self.third_player = self.second_player
+            self.second_highest_score = self.highest_score
+            self.second_player = self.best_player
+            self.highest_score = self.settings.score
+            self.best_player = self.settings.player_name
+        elif self.settings.score >= int(self.second_highest_score):
+            self.third_highest_score = self.second_highest_score
+            self.third_player =  self.second_player
+            self.second_highest_score = self.settings.score
+            self.second_player = self.settings.player_name
+        elif self.settings.score >= int(self.third_highest_score):
+            self.third_highest_score = self.settings.score
+            self.third_player =  self.settings.player_name
 
-        new_records_table = [best_player + ';' + str(highest_score) + '\n', second_player + ';' + str(second_highest_score) + '\n', third_player + ';' + str(third_highest_score) + '\n']
-        print(new_records_table)
-        return new_records_table
+        self.new_records_table = [self.best_player + ';' + str(self.highest_score) + '\n', self.second_player + ';' + str(self.second_highest_score) + '\n', self.third_player + ';' + str(self.third_highest_score) + '\n']
+        print(self.new_records_table)
+        return self.new_records_table
 
-    def save_new_records_table(self, new_records_table):
+    def save_new_records_table(self):
         with open('all_time_score_records.txt', mode='w') as output_data:
-            output_data.writelines(new_records_table)
+            output_data.writelines(self.new_records_table)
+
+    def show_records_table(self):
+        self.screen.fill(self.settings.background_color)
+        self.font = pygame.font.SysFont('Arial', 50)
+
+        header = 'All-time greatest:'
+        header_image = self.font.render(header, True, self.settings.text_color)
+        self.header_rect = header_image.get_rect()
+        self.header_rect.x = self.screen_rect.width // 2 - 200
+        self.header_rect.y = self.screen_rect.height // 2 - 200
+        self.screen.blit(header_image, self.header_rect)
+
+        self.draw_player_record(self.best_player, self.highest_score, 1)
+        self.draw_player_record(self.second_player, self.second_highest_score, 2)
+        self.draw_player_record(self.third_player, self.third_highest_score, 3)
+        pygame.display.update()
+
+    def draw_player_record(self, name, score, place):
+        player_message = f'{place}. {name} - {score}'
+        print(player_message)
+        image = self.font.render(player_message, True, self.settings.text_color)
+        image_rect = image.get_rect()
+        image_rect.x = self.header_rect.x
+        image_rect.y = self.header_rect.y + (place + 1) * self.header_rect.height
+        self.screen.blit(image, image_rect)

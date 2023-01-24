@@ -1,6 +1,8 @@
 import sys
 import pygame
 
+from time import sleep
+
 from game_settings import GameSettings
 from game_records import Statistics
 from word import WordSpell
@@ -242,11 +244,14 @@ class SpellBeeGame:
     def update_records_table(self):
         old_records_table = self.stats.read_highest_scores()
         new_records_table = self.stats.check_for_new_records(old_records_table)
-        self.stats.save_new_records_table(new_records_table)
+        self.stats.save_new_records_table()
 
     def game_over(self):
         """End the game."""
         self.update_records_table()
+        self.stats.show_records_table()
+        # Pause for a while.
+        sleep(3)
         sys.exit()
 
 if __name__ == '__main__':
